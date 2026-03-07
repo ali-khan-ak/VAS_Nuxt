@@ -16,26 +16,26 @@
         ></sidebar-item>
         <sidebar-item
           :link="{
-            name: 'Campaign Management',
+            name: 'ODB Campaign Management',
             icon: 'tim-icons icon-notes',
-            path: '/campaigns'
+            path: '/odb-campaign'
           }"
         >
         </sidebar-item>
         <sidebar-item
           :link="{
-            name: 'SMS Management',
+            name: 'SMS CampaignManagement',
             icon: 'tim-icons icon-chat-33',
-            path: '/sms'
+            path: '/sms-campaign'
           }"
         >
         </sidebar-item>
 
         <sidebar-item
           :link="{
-            name: 'OBD Campaign Management',
+            name: 'SMS Management',
             icon: 'tim-icons icon-email-85',
-            path: '/odb-campaigns'
+            path: '/sms-management'
           }"
         >
         </sidebar-item>

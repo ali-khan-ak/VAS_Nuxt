@@ -44,7 +44,7 @@
           :link="{
             name: 'USSD Management',
             icon: 'tim-icons icon-money-coins',
-            path: '/ussd' }"
+            path: '/ussd-management' }"
         >
         </sidebar-item>
 
@@ -52,7 +52,7 @@
           :link="{
             name: 'IVR Management',
             icon: 'tim-icons icon-puzzle-10',
-            path: '/ivr'
+            path: '/ivr-management'
           }"
         ></sidebar-item>
 
@@ -60,7 +60,7 @@
           :link="{
             name: 'SMS & USSD Reporting',
             icon: 'tim-icons icon-align-center',
-            path: '/reporting/sms-ussd'
+            path: '/sms-ussd-reporting'
           }"
         ></sidebar-item>
 

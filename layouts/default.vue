@@ -59,7 +59,7 @@
         <sidebar-item
           :link="{
             name: 'SMS & USSD Reporting',
-            icon: 'tim-icons icon-align-center',
+            icon: 'tim-icons icon-chat-33',
             path: '/sms-ussd-reporting'
           }"
         ></sidebar-item>
@@ -67,15 +67,15 @@
         <sidebar-item
           :link="{
             name: 'IVR Reporting',
-            icon: 'tim-icons icon-align-center',
-            path: '/reporting/ivr'
+            icon: 'tim-icons icon-single-copy-04',
+            path: '/ivr-reporting'
           }"
         ></sidebar-item>
         <sidebar-item
           :link="{
             name: 'Subscribers Reporting',
-            icon: 'tim-icons icon-align-center',
-            path: '/reporting/subscribers'
+            icon: 'tim-icons icon-calendar-60',
+            path: '/subscription-reporting'
           }"
         ></sidebar-item>
 

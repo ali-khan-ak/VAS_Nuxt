@@ -1,25 +1,7 @@
-/*!
-
- =========================================================
- * Nuxt Black Dashboard - v1.1.0
- =========================================================
-
- * Product Page: https://www.creative-tim.com/product/nuxt-black-dashboard
- * Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
- * Coded by Creative Tim
-
- =========================================================
-
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- */
 export default {
   ssr: true,
-  /*
-   ** Headers of the page
-   */
   head: {
-    title: "Nuxt Black Dashboard",
+    title: "VAS - Platform",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },

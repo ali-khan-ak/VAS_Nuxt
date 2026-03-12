@@ -180,7 +180,7 @@
               <el-select v-model="outboundFilters.promptType" placeholder="Prompt Type" class="w-100">
                 <el-option label="All Types"    value=""></el-option>
                 <el-option label="Pre-recorded" value="Pre-recorded"></el-option>
-                <el-option label="TTS"          value="TTS"></el-option>
+                
               </el-select>
             </div>
             <div class="col-md-3 text-right">
@@ -561,11 +561,11 @@ export default {
 
       outboundData: [
         { id:1,  campaign:'Premier League GW28 OBD',       promptType:'Pre-recorded', segment:'120,000 subscribers', status:'Answered',  totalCalls:'119,420', answered:'80,012', failed:'320',   answerRate:67, avgDuration:42, scheduledAt:'2025-03-01 08:00' },
-        { id:2,  campaign:'UCL Pre-Match Alert',           promptType:'TTS',          segment:'250,000 subscribers', status:'No Answer', totalCalls:'210,780', answered:'84,312', failed:'1,840', answerRate:40, avgDuration:28, scheduledAt:'2025-03-05 10:30' },
+        { id:2,  campaign:'UCL Pre-Match Alert',           promptType:'Pre-recorded',          segment:'250,000 subscribers', status:'No Answer', totalCalls:'210,780', answered:'84,312', failed:'1,840', answerRate:40, avgDuration:28, scheduledAt:'2025-03-05 10:30' },
         { id:3,  campaign:'FA Cup Score Blast',            promptType:'Pre-recorded', segment:'65,000 subscribers',  status:'Answered',  totalCalls:'63,450',  answered:'44,415', failed:'640',   answerRate:70, avgDuration:35, scheduledAt:'2025-02-28 18:00' },
-        { id:4,  campaign:'Fantasy Football Reminder',     promptType:'TTS',          segment:'98,000 subscribers',  status:'Busy',      totalCalls:'0',       answered:'0',      failed:'0',     answerRate:0,  avgDuration:0,  scheduledAt:'2025-03-10 09:00' },
+        { id:4,  campaign:'Fantasy Football Reminder',     promptType:'Pre-recorded',          segment:'98,000 subscribers',  status:'Busy',      totalCalls:'0',       answered:'0',      failed:'0',     answerRate:0,  avgDuration:0,  scheduledAt:'2025-03-10 09:00' },
         { id:5,  campaign:'Serie A Weekend OBD',           promptType:'Pre-recorded', segment:'45,000 subscribers',  status:'Failed',    totalCalls:'12,100',  answered:'3,146',  failed:'8,954', answerRate:26, avgDuration:18, scheduledAt:'2025-03-04 07:00' },
-        { id:6,  campaign:'La Liga Results Call',          promptType:'TTS',          segment:'80,000 subscribers',  status:'Answered',  totalCalls:'78,500',  answered:'54,950', failed:'780',   answerRate:70, avgDuration:44, scheduledAt:'2025-03-06 11:00' },
+        { id:6,  campaign:'La Liga Results Call',          promptType:'Pre-recorded',          segment:'80,000 subscribers',  status:'Answered',  totalCalls:'78,500',  answered:'54,950', failed:'780',   answerRate:70, avgDuration:44, scheduledAt:'2025-03-06 11:00' },
         { id:7,  campaign:'Subscription Renewal Reminder', promptType:'Pre-recorded', segment:'75,000 subscribers',  status:'Answered',  totalCalls:'74,100',  answered:'54,093', failed:'370',   answerRate:73, avgDuration:36, scheduledAt:'2025-02-25 20:00' },
       ],
 

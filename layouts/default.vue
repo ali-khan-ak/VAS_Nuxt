@@ -78,6 +78,20 @@
             path: '/subscription-reporting'
           }"
         ></sidebar-item>
+        <sidebar-item
+          :link="{
+            name: 'Shortcode Management',
+            icon: 'tim-icons icon-settings-gear-63',
+            path: '/short-code-management'
+          }"
+        ></sidebar-item>
+        <sidebar-item
+          :link="{
+            name: 'Admin Panel',
+            icon: 'tim-icons icon-single-02',
+            path: '/admin-panel'
+          }"
+        ></sidebar-item>
 
       </template>
     </side-bar>

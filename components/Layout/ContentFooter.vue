@@ -9,10 +9,10 @@
             rel="noopener"
             class="nav-link"
           >
-            Creative Tim
+            VAS
           </a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a
             href="https://www.creative-tim.com/presentation"
             target="_blank"
@@ -31,9 +31,9 @@
           >
             Blog
           </a>
-        </li>
+        </li> -->
       </ul>
-      <div class="copyright">
+      <!-- <div class="copyright">
         &copy; {{ year }}, made with <i class="tim-icons icon-heart-2"></i> by
         
         <a
@@ -43,7 +43,7 @@
           >Creative Tim</a
         >
         for a better web.
-      </div>
+      </div> -->
     </div>
   </footer>
 </template>

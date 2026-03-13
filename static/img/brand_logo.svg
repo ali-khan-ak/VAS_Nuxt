@@ -1,0 +1,46 @@
+
+<svg width="100%" viewBox="0 0 680 480" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#534AB7"/>
+      <stop offset="100%" stop-color="#1D9E75"/>
+    </linearGradient>
+    <linearGradient id="sg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7F77DD"/>
+      <stop offset="100%" stop-color="#5DCAA5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="340" cy="220" r="158" fill="url(#sg)" opacity="0.08"/>
+
+  <!-- Bold S letterform -->
+  <text
+    x="340"
+    y="305"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="260"
+    font-weight="700"
+    fill="url(#sg)"
+    letter-spacing="-4"
+  >S</text>
+
+  <!-- Accent dot -->
+  <circle cx="412" cy="108" r="14" fill="url(#sg2)" opacity="0.9"/>
+
+  <!-- Brand name -->
+  <text
+    x="340"
+    y="418"
+    text-anchor="middle"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="28"
+    font-weight="500"
+    fill="url(#sg)"
+    letter-spacing="8"
+  >SKEWSET</text>
+
+  <!-- Thin underline accent -->
+  <rect x="240" y="428" width="200" height="2" rx="1" fill="url(#sg2)" opacity="0.6"/>
+</svg>

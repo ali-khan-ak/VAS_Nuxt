@@ -12,7 +12,7 @@ export default {
       },
     ],
     link: [
-      { rel: "icon", type: "image/x-icon", href: "/favicon.png" },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.svg" },
       {
         rel: "stylesheet",
         href:
@@ -28,6 +28,9 @@ export default {
       class: "", // Add `white-content` class here to enable "white" mode.
     },
   },
+  serverMiddleware: [
+    { path: '/api/upload-logo', handler: '~/server-middleware/uploadLogo.js' },
+  ],
   router: {
     linkExactActiveClass: "active",
   },

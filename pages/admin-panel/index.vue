@@ -6,7 +6,7 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 class="page-title mb-1">Admin Panel</h2>
-          <p class="text-muted mb-0">User management, permissions, roles, activity audit & SMTP configuration</p>
+          <p class="text-muted mb-0">User management, permissions, roles, activity audit, SMTP & branding</p>
         </div>
         <div class="d-flex align-items-center" style="gap:10px;">
           <base-button type="primary" size="sm" @click="openCreateUserModal">
@@ -495,6 +495,173 @@
     </template>
 
     <!-- ══════════════════════════════════
+         TAB 5 — BRANDING
+    ══════════════════════════════════ -->
+    <template v-if="activeTab === 'branding'">
+
+      <div class="col-12 mb-2">
+        <div class="section-heading d-flex justify-content-between align-items-center">
+          <span><i class="tim-icons icon-image-02 mr-2"></i> Platform Branding</span>
+          <div style="gap:8px;" class="d-flex">
+            <base-button v-if="!brandEditMode" size="sm" type="info" @click="brandEditMode = true">
+              <i class="tim-icons icon-pencil mr-1"></i> Edit Settings
+            </base-button>
+            <template v-else>
+              <base-button size="sm" type="default" @click="cancelBrandEdit">Cancel</base-button>
+              <base-button size="sm" type="success" @click="saveBranding">
+                <i class="tim-icons icon-check-2 mr-1"></i> Save Branding
+              </base-button>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logo Upload Card -->
+      <div class="col-lg-7 col-12 mb-4">
+        <card class="accent-card accent-purple">
+          <h5 class="config-card-title mb-1">Platform Logo</h5>
+          <p class="text-muted mb-4" style="font-size:0.8rem;">Upload your logo in PNG or SVG format. Recommended size: 200×60px. Max 2MB.</p>
+
+          <!-- Current / Preview display -->
+          <div class="logo-preview-row mb-4">
+            <div class="logo-current-wrap">
+              <div class="logo-current-label">Current Logo</div>
+              <div class="logo-display logo-display-current">
+                <img :src="currentLogoUrl" alt="Current Logo" class="logo-img" />
+              </div>
+            </div>
+            <div class="logo-arrow">
+              <i class="tim-icons icon-minimal-right"></i>
+            </div>
+            <div class="logo-current-wrap">
+              <div class="logo-current-label">Preview</div>
+              <div class="logo-display logo-display-preview" :class="{ 'logo-has-pending': pendingLogo }">
+                <img v-if="pendingLogo" :src="pendingLogo" alt="Logo Preview" class="logo-img" />
+                <div v-else class="logo-placeholder logo-placeholder-dim">
+                  <i class="tim-icons icon-upload"></i>
+                  <span>Upload to preview</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drop zone -->
+          <div
+            class="logo-dropzone"
+            :class="{ 'dz-active': logoDropActive }"
+            @dragover.prevent="logoDropActive = true"
+            @dragleave="logoDropActive = false"
+            @drop.prevent="handleLogoDrop"
+            @click="$refs.logoFileInput.click()"
+          >
+            <input ref="logoFileInput" type="file" accept="image/png,image/svg+xml,image/jpeg" style="display:none;" @change="handleLogoFile" />
+            <div class="dz-icon">
+              <i class="tim-icons icon-cloud-upload-94"></i>
+            </div>
+            <p class="dz-main">Drag & drop your logo here</p>
+            <p class="dz-sub">or <span class="dz-link">browse files</span> — PNG, SVG, JPG · max 2MB</p>
+          </div>
+
+          <!-- File info + actions -->
+          <div v-if="pendingLogoFile" class="logo-file-info mt-3">
+            <div class="lfi-icon"><i class="tim-icons icon-paper"></i></div>
+            <div class="lfi-body">
+              <div class="lfi-name">{{ pendingLogoFile.name }} → <strong>brand_logo.{{ pendingLogoExt }}</strong></div>
+              <div class="lfi-size">{{ formatFileSize(pendingLogoFile.size) }}</div>
+            </div>
+            <base-button size="sm" type="success" @click="uploadLogo" :disabled="logoUploading">
+              <i class="tim-icons icon-cloud-upload-94 mr-1"></i>
+              {{ logoUploading ? 'Uploading…' : 'Upload & Apply' }}
+            </base-button>
+            <base-button size="sm" type="default" @click="clearPendingLogo" :disabled="logoUploading">
+              <i class="tim-icons icon-simple-remove"></i>
+            </base-button>
+          </div>
+
+          <!-- Logo History -->
+          <div class="logo-history mt-4" v-if="logoHistory.length">
+            <div class="logo-history-title">Upload History</div>
+            <div v-for="entry in logoHistory" :key="entry.id" class="logo-history-item">
+              <div class="lhi-dot" :class="entry.active ? 'lhi-active' : 'lhi-old'"></div>
+              <div class="lhi-body">
+                <span class="lhi-label">{{ entry.label }}</span>
+                <span class="lhi-date">{{ entry.date }}</span>
+              </div>
+              <span v-if="entry.active" class="lhi-badge">Current</span>
+            </div>
+          </div>
+        </card>
+      </div>
+
+
+      <!-- <div class="col-lg-5 col-12 mb-4">
+        <card class="accent-card accent-blue">
+          <h5 class="config-card-title mb-1">Brand Settings</h5>
+          <p class="text-muted mb-4" style="font-size:0.8rem;">Customise your platform's display name and accent colours.</p>
+
+          <div class="mb-3">
+            <label class="config-label">Platform / Site Name</label>
+            <div class="brand-input-wrap" :class="{ 'brand-input-active': brandEditMode }">
+              <i class="tim-icons icon-badge brand-input-icon"></i>
+              <input v-model="brandSiteName" class="brand-input" :disabled="!brandEditMode" placeholder="e.g. VAS Platform" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="config-label">Primary Accent Colour</label>
+            <div class="color-picker-row">
+              <div class="color-swatch-wrap">
+                <input type="color" v-model="brandPrimaryColor" :disabled="!brandEditMode" class="color-swatch-input" />
+                <div class="color-swatch-preview" :style="{ background: brandPrimaryColor }"></div>
+              </div>
+              <div class="brand-input-wrap flex-1" :class="{ 'brand-input-active': brandEditMode }">
+                <input v-model="brandPrimaryColor" class="brand-input mono-text" :disabled="!brandEditMode" placeholder="#e14eca" />
+              </div>
+              <div class="color-presets">
+                <div v-for="c in colorPresets" :key="c" class="color-preset-dot" :style="{ background: c }"
+                  @click="brandEditMode && (brandPrimaryColor = c)" :class="{ 'cp-selected': brandPrimaryColor === c }">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="config-label">Secondary Accent Colour</label>
+            <div class="color-picker-row">
+              <div class="color-swatch-wrap">
+                <input type="color" v-model="brandAccentColor" :disabled="!brandEditMode" class="color-swatch-input" />
+                <div class="color-swatch-preview" :style="{ background: brandAccentColor }"></div>
+              </div>
+              <div class="brand-input-wrap flex-1" :class="{ 'brand-input-active': brandEditMode }">
+                <input v-model="brandAccentColor" class="brand-input mono-text" :disabled="!brandEditMode" placeholder="#1d8cf8" />
+              </div>
+              <div class="color-presets">
+                <div v-for="c in colorPresets" :key="c" class="color-preset-dot" :style="{ background: c }"
+                  @click="brandEditMode && (brandAccentColor = c)" :class="{ 'cp-selected': brandAccentColor === c }">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="brand-live-preview">
+            <div class="blp-label">Live Preview</div>
+            <div class="blp-bar" :style="{ background: brandPrimaryColor }">
+              <span class="blp-site-name">{{ brandSiteName || 'VAS Platform' }}</span>
+              <div class="blp-dot" :style="{ background: brandAccentColor }"></div>
+            </div>
+            <div class="blp-content">
+              <div class="blp-tag" :style="{ background: brandPrimaryColor + '22', color: brandPrimaryColor, borderColor: brandPrimaryColor + '55' }">Primary</div>
+              <div class="blp-tag" :style="{ background: brandAccentColor  + '22', color: brandAccentColor,  borderColor: brandAccentColor  + '55' }">Accent</div>
+              <div class="blp-btn" :style="{ background: brandPrimaryColor }">Button</div>
+            </div>
+          </div>
+
+        </card>
+      </div> -->
+
+    </template>
+
+    <!-- ══════════════════════════════════
          CREATE / EDIT USER MODAL
     ══════════════════════════════════ -->
     <modal :show.sync="showUserModal" class="modal-black" :show-close="true" header-classes="justify-content-center">
@@ -646,7 +813,8 @@ export default {
         { key: 'users',  label: 'User Management',    icon: 'icon-single-02' },
         { key: 'roles',  label: 'Roles & Permissions', icon: 'icon-badge' },
         { key: 'audit',  label: 'Audit Trail',         icon: 'icon-notes' },
-        { key: 'smtp',   label: 'SMTP Config',         icon: 'icon-email-85' },
+        { key: 'smtp',     label: 'SMTP Config',         icon: 'icon-email-85' },
+        { key: 'branding', label: 'Branding',            icon: 'icon-image-02' },
       ],
 
       // ── Users ──
@@ -762,6 +930,20 @@ export default {
         permOverrides: {}
       },
 
+      // ── Branding ──
+      currentLogoUrl:  '/img/brand_logo.svg',
+      pendingLogo:     null,
+      pendingLogoFile: null,
+      logoUploading:   false,
+      logoHistory: [
+        { id:1, date:'2025-03-01 10:22', label:'brand_logo.svg (current)', active:true },
+      ],
+      brandPrimaryColor: '#e14eca',
+      brandAccentColor:  '#1d8cf8',
+      brandSiteName:     'VAS Platform',
+      brandEditMode:     false,
+      logoDropActive:    false,
+
       allPermissions: [
         { key:'view_campaigns',   label:'View Campaigns'   },
         { key:'create_campaigns', label:'Create Campaigns' },
@@ -817,6 +999,14 @@ export default {
       if (this.pwStrength < 60) return 'Fair';
       if (this.pwStrength < 85) return 'Good';
       return 'Strong';
+    },
+    colorPresets() {
+      return ['#e14eca','#1d8cf8','#00f2c3','#ff8d72','#fd5d93','#ba54f5','#18ce0f','#ff5f6d'];
+    },
+    pendingLogoExt() {
+      if (!this.pendingLogoFile) return '';
+      const map = { 'image/png':'png', 'image/jpeg':'jpg', 'image/svg+xml':'svg' };
+      return map[this.pendingLogoFile.type] || 'png';
     },
     smtpStatusLabel() {
       return { idle:'Not tested', success:'Connection OK', error:'Connection Failed', testing:'Testing…' }[this.smtpTestStatus] || '';
@@ -904,6 +1094,79 @@ export default {
         this.smtpTestStatus = 'success';
         this.$notify({ type:'success', message:`Test email sent to ${this.smtpTestEmail}.` });
       }, 2000);
+    },
+    // ── Branding ──
+    handleLogoFile(e) {
+      const file = e.target.files[0];
+      if (file) this.loadLogoFile(file);
+    },
+    handleLogoDrop(e) {
+      this.logoDropActive = false;
+      const file = e.dataTransfer.files[0];
+      if (file) this.loadLogoFile(file);
+    },
+    loadLogoFile(file) {
+      const ALLOWED = ['image/png', 'image/jpeg', 'image/svg+xml'];
+      if (!ALLOWED.includes(file.type)) {
+        this.$notify({ type:'danger', message:'Only PNG, JPG and SVG files are allowed.' }); return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        this.$notify({ type:'danger', message:'File exceeds 2MB limit.' }); return;
+      }
+      this.pendingLogoFile = file;
+      const reader = new FileReader();
+      reader.onload = e => { this.pendingLogo = e.target.result; };
+      reader.readAsDataURL(file);
+    },
+    async uploadLogo() {
+      if (!this.pendingLogoFile) return;
+      this.logoUploading = true;
+      try {
+        const formData = new FormData();
+        formData.append('logo', this.pendingLogoFile);
+
+        const response = await fetch('/api/upload-logo', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const res = await response.json();
+
+        if (res.success) {
+          this.currentLogoUrl = res.url;
+          this.logoHistory.forEach(h => h.active = false);
+          this.logoHistory.unshift({
+            id:     Date.now(),
+            date:   new Date().toISOString().slice(0,16).replace('T',' '),
+            label:  `${this.pendingLogoFile.name} → ${res.filename}`,
+            active: true,
+          });
+          this.clearPendingLogo();
+          this.$notify({ type:'success', message:`Logo saved as "${res.filename}".` });
+        } else {
+          this.$notify({ type:'danger', message: res.message || 'Upload failed.' });
+        }
+      } catch (err) {
+        console.error('[uploadLogo frontend]', err);
+        this.$notify({ type:'danger', message: 'Upload error: ' + err.message });
+      } finally {
+        this.logoUploading = false;
+      }
+    },
+    clearPendingLogo() {
+      this.pendingLogo = null;
+      this.pendingLogoFile = null;
+      if (this.$refs.logoFileInput) this.$refs.logoFileInput.value = '';
+    },
+    formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    },
+    cancelBrandEdit() { this.brandEditMode = false; },
+    saveBranding() {
+      this.brandEditMode = false;
+      this.$notify({ type:'success', message:'Brand settings saved.' });
     },
   }
 };
@@ -1066,4 +1329,97 @@ export default {
 .el-select .el-input__inner::placeholder { color:#9a9a9a !important; }
 .el-select .el-input .el-select__caret  { color:#9a9a9a !important; }
 .el-table th > .cell { white-space:nowrap; }
+
+/* Revert row */
+.revert-row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; background:rgba(255,141,114,0.06); border:1px solid rgba(255,141,114,0.15); border-radius:8px; padding:10px 14px; }
+.revert-info { font-size:0.78rem; color:#9a9a9a; }
+.revert-info strong { color:#fff; }
+
+/* ══ Branding — Logo ══ */
+.logo-preview-row { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.logo-current-wrap { flex:1; min-width:160px; }
+.logo-current-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#9a9a9a; margin-bottom:8px; }
+.logo-arrow { color:#444; font-size:1.2rem; flex-shrink:0; }
+.logo-display {
+  height:80px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  border:2px dashed rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.03);
+  overflow:hidden; transition:border-color 0.2s;
+}
+.logo-display-preview { border-color:rgba(225,78,202,0.25); }
+.logo-has-pending { border-style:solid; border-color:rgba(225,78,202,0.5); background:rgba(225,78,202,0.04); }
+.logo-img { max-height:60px; max-width:100%; object-fit:contain; padding:6px; }
+.logo-placeholder { display:flex; flex-direction:column; align-items:center; gap:5px; color:#555; font-size:0.72rem; }
+.logo-placeholder i { font-size:1.4rem; }
+.logo-placeholder-dim { color:#333; }
+
+/* Drop zone */
+.logo-dropzone {
+  border:2px dashed rgba(255,255,255,0.12);
+  border-radius:12px;
+  padding:32px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.2s;
+  background:rgba(255,255,255,0.02);
+}
+.logo-dropzone:hover, .dz-active { border-color:rgba(225,78,202,0.5); background:rgba(225,78,202,0.04); }
+.dz-icon { font-size:2rem; color:#555; margin-bottom:10px; }
+.dz-active .dz-icon { color:#e14eca; }
+.dz-main { font-size:0.88rem; color:#ccc; font-weight:600; margin:0 0 4px; }
+.dz-sub  { font-size:0.76rem; color:#666; margin:0; }
+.dz-link { color:#e14eca; cursor:pointer; text-decoration:underline; }
+
+/* File info strip */
+.logo-file-info { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px 14px; }
+.lfi-icon { color:#9a9a9a; font-size:1.1rem; }
+.lfi-body { flex:1; min-width:0; }
+.lfi-name { font-size:0.82rem; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lfi-size { font-size:0.7rem; color:#9a9a9a; }
+
+/* Logo history */
+.logo-history { border-top:1px solid rgba(255,255,255,0.07); padding-top:14px; }
+.logo-history-title { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#9a9a9a; margin-bottom:10px; }
+.logo-history-item  { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.logo-history-item:last-child { border-bottom:none; }
+.lhi-dot     { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.lhi-active  { background:#18ce0f; box-shadow:0 0 5px rgba(24,206,15,0.5); }
+.lhi-old     { background:#444; }
+.lhi-body    { flex:1; min-width:0; display:flex; flex-direction:column; }
+.lhi-label   { font-size:0.8rem; font-weight:600; color:#fff; }
+.lhi-date    { font-size:0.7rem; color:#9a9a9a; }
+.lhi-badge   { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(24,206,15,0.12); color:#18ce0f; border:1px solid rgba(24,206,15,0.25); padding:2px 8px; border-radius:8px; }
+
+/* ══ Branding — Settings ══ */
+.brand-input-wrap {
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  border-radius:6px; padding:8px 10px; transition:border-color 0.2s;
+}
+.brand-input-active { border-color:rgba(29,140,248,0.5) !important; background:rgba(29,140,248,0.05) !important; }
+.brand-input-icon { font-size:0.82rem; color:#9a9a9a; flex-shrink:0; }
+.brand-input { background:transparent; border:none; color:#fff; font-size:0.88rem; width:100%; outline:none; }
+.brand-input:disabled { opacity:0.5; cursor:not-allowed; }
+.flex-1 { flex:1; }
+
+/* Color picker row */
+.color-picker-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.color-swatch-wrap { position:relative; width:36px; height:36px; border-radius:8px; overflow:hidden; flex-shrink:0; border:2px solid rgba(255,255,255,0.1); }
+.color-swatch-input { position:absolute; inset:0; width:100%; height:100%; border:none; cursor:pointer; padding:0; opacity:0; }
+.color-swatch-preview { position:absolute; inset:0; border-radius:6px; pointer-events:none; }
+.color-presets { display:flex; gap:5px; flex-wrap:wrap; }
+.color-preset-dot { width:18px; height:18px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform 0.15s, border-color 0.15s; }
+.color-preset-dot:hover { transform:scale(1.2); }
+.cp-selected { border-color:#fff !important; transform:scale(1.15); }
+
+/* Live preview */
+.brand-live-preview { background:rgba(0,0,0,0.25); border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); }
+.blp-label   { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#9a9a9a; padding:8px 12px 0; }
+.blp-bar     { display:flex; align-items:center; justify-content:space-between; padding:8px 14px; }
+.blp-site-name { font-size:0.85rem; font-weight:700; color:#fff; }
+.blp-dot     { width:10px; height:10px; border-radius:50%; }
+.blp-content { display:flex; align-items:center; gap:8px; padding:10px 14px; flex-wrap:wrap; }
+.blp-tag     { font-size:0.65rem; font-weight:700; text-transform:uppercase; padding:3px 8px; border-radius:6px; border:1px solid; }
+.blp-btn     { font-size:0.72rem; font-weight:700; color:#fff; padding:4px 14px; border-radius:6px; margin-left:auto; }
 </style>

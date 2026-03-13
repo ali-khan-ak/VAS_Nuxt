@@ -24,7 +24,7 @@
         </sidebar-item>
         <sidebar-item
           :link="{
-            name: 'SMS CampaignManagement',
+            name: 'SMS Campaign Management',
             icon: 'tim-icons icon-chat-33',
             path: '/sms-campaign'
           }"
